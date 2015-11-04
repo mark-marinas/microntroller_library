@@ -1,0 +1,44 @@
+/*
+ * data_types.h
+ *
+ *  Created on: Oct 26, 2015
+ *      Author: mark.marinas
+ */
+
+#ifndef DATA_TYPES_H_
+#define DATA_TYPES_H_
+
+typedef enum {
+	NO_ERROR,
+	INVALID_BIT_POSITION,
+	INVALID_PORT_NUMBER,
+	UNINITIALIZED_PIN,
+	NOT_ENOUGH_GPIO_INTERRUPT,
+	GPIO_INTERRUPT_NOT_DEFINED,
+	INVALID_BAUD_RATE,
+	FIFO_INIT_ERROR,
+	FIFO_FULL,
+	FIFO_EMPTY,
+	UNDEFINED_UART_PORT,
+	FIFO_NOT_EMPTY,
+	TIMEOUT,
+	FEATURE_NOT_SUPPORTED,
+	UNITIALIZED_I2C,
+	I2C_ERROR,
+	I2C_READ_ERROR,
+	I2C_WRITE_ERROR,
+} error_code_t;
+
+typedef enum {
+	LO,
+	HI
+} signal_level_t;
+
+typedef enum {
+	NON_BLOCKING,
+	BLOCKING,
+	BLOCKING_UNKNOWN
+} blocking_type_t;
+
+
+#endif /* DATA_TYPES_H_ */

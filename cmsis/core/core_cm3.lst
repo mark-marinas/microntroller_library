@@ -1,0 +1,256 @@
+ARM GAS  C:\Users\MARK~1.MAR\AppData\Local\Temp\ccoqTBEP.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1	@ Tag_ABI_FP_denormal
+   5              		.eabi_attribute 21, 1	@ Tag_ABI_FP_exceptions
+   6              		.eabi_attribute 23, 3	@ Tag_ABI_FP_number_model
+   7              		.eabi_attribute 24, 1	@ Tag_ABI_align8_needed
+   8              		.eabi_attribute 25, 1	@ Tag_ABI_align8_preserved
+   9              		.eabi_attribute 26, 1	@ Tag_ABI_enum_size
+  10              		.eabi_attribute 30, 6	@ Tag_ABI_optimization_goals
+  11              		.eabi_attribute 34, 1	@ Tag_CPU_unaligned_access
+  12              		.eabi_attribute 18, 4	@ Tag_ABI_PCS_wchar_t
+  13              		.file	"core_cm3.c"
+  14              	@ GNU C (GNU Tools for ARM Embedded Processors) version 4.9.3 20141119 (release) [ARM/embedded-4_9-
+  15              	@	compiled by GNU C version 4.7.4, GMP version 4.3.2, MPFR version 2.4.2, MPC version 0.8.1
+  16              	@ GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+  17              	@ options passed:  -I . -I ./inc -I ./cmsis/core -I ./cmsis/device
+  18              	@ -imultilib armv7-m
+  19              	@ -iprefix c:\program files (x86)\gnu tools arm embedded\4.9 2014q4\bin\../lib/gcc/arm-none-eabi/4.
+  20              	@ -isysroot c:\program files (x86)\gnu tools arm embedded\4.9 2014q4\bin\../arm-none-eabi
+  21              	@ -MD cmsis/core/core_cm3.d -MF .dep/core_cm3.o.d -MP
+  22              	@ -MQ cmsis/core/core_cm3.o -D__USES_INITFINI__ -D RUN_FROM_FLASH=1
+  23              	@ cmsis/core/core_cm3.c -mcpu=cortex-m3 -mthumb
+  24              	@ -auxbase-strip cmsis/core/core_cm3.o -gdwarf-2 -O0 -Wall
+  25              	@ -Wstrict-prototypes -fomit-frame-pointer -fverbose-asm
+  26              	@ options enabled:  -faggressive-loop-optimizations -fauto-inc-dec -fcommon
+  27              	@ -fdelete-null-pointer-checks -fdwarf2-cfi-asm -fearly-inlining
+  28              	@ -feliminate-unused-debug-types -ffunction-cse -fgcse-lm -fgnu-runtime
+  29              	@ -fgnu-unique -fident -finline-atomics -fira-hoist-pressure
+  30              	@ -fira-share-save-slots -fira-share-spill-slots -fivopts
+  31              	@ -fkeep-static-consts -fleading-underscore -fmath-errno
+  32              	@ -fmerge-debug-strings -fomit-frame-pointer -fpeephole
+  33              	@ -fprefetch-loop-arrays -freg-struct-return
+  34              	@ -fsched-critical-path-heuristic -fsched-dep-count-heuristic
+  35              	@ -fsched-group-heuristic -fsched-interblock -fsched-last-insn-heuristic
+  36              	@ -fsched-rank-heuristic -fsched-spec -fsched-spec-insn-heuristic
+  37              	@ -fsched-stalled-insns-dep -fshow-column -fsigned-zeros
+  38              	@ -fsplit-ivs-in-unroller -fstrict-volatile-bitfields -fsync-libcalls
+  39              	@ -ftrapping-math -ftree-coalesce-vars -ftree-cselim -ftree-forwprop
+  40              	@ -ftree-loop-if-convert -ftree-loop-im -ftree-loop-ivcanon
+  41              	@ -ftree-loop-optimize -ftree-parallelize-loops= -ftree-phiprop
+  42              	@ -ftree-reassoc -ftree-scev-cprop -funit-at-a-time -fverbose-asm
+  43              	@ -fzero-initialized-in-bss -mfix-cortex-m3-ldrd -mlittle-endian -mlra
+  44              	@ -mpic-data-is-text-relative -msched-prolog -mthumb -munaligned-access
+  45              	@ -mvectorize-with-neon-quad
+  46              	
+  47              		.text
+  48              	.Ltext0:
+  49              		.cfi_sections	.debug_frame
+  50              	.Letext0:
+  51              		.section	.debug_info,"",%progbits
+  52              	.Ldebug_info0:
+  53 0000 60000000 		.4byte	0x60
+  54 0004 0200     		.2byte	0x2
+  55 0006 00000000 		.4byte	.Ldebug_abbrev0
+  56 000a 04       		.byte	0x4
+  57 000b 01       		.uleb128 0x1
+ARM GAS  C:\Users\MARK~1.MAR\AppData\Local\Temp\ccoqTBEP.s 			page 2
+
+
+  58 000c 1F000000 		.4byte	.LASF9
+  59 0010 01       		.byte	0x1
+  60 0011 1D010000 		.4byte	.LASF10
+  61 0015 CC000000 		.4byte	.LASF11
+  62 0019 00000000 		.4byte	.Ldebug_line0
+  63 001d 02       		.uleb128 0x2
+  64 001e 01       		.byte	0x1
+  65 001f 06       		.byte	0x6
+  66 0020 A3000000 		.4byte	.LASF0
+  67 0024 02       		.uleb128 0x2
+  68 0025 01       		.byte	0x1
+  69 0026 08       		.byte	0x8
+  70 0027 06010000 		.4byte	.LASF1
+  71 002b 02       		.uleb128 0x2
+  72 002c 02       		.byte	0x2
+  73 002d 05       		.byte	0x5
+  74 002e C2000000 		.4byte	.LASF2
+  75 0032 02       		.uleb128 0x2
+  76 0033 02       		.byte	0x2
+  77 0034 07       		.byte	0x7
+  78 0035 AF000000 		.4byte	.LASF3
+  79 0039 02       		.uleb128 0x2
+  80 003a 04       		.byte	0x4
+  81 003b 05       		.byte	0x5
+  82 003c 14010000 		.4byte	.LASF4
+  83 0040 02       		.uleb128 0x2
+  84 0041 04       		.byte	0x4
+  85 0042 07       		.byte	0x7
+  86 0043 0D000000 		.4byte	.LASF5
+  87 0047 02       		.uleb128 0x2
+  88 0048 08       		.byte	0x8
+  89 0049 05       		.byte	0x5
+  90 004a 33010000 		.4byte	.LASF6
+  91 004e 02       		.uleb128 0x2
+  92 004f 08       		.byte	0x8
+  93 0050 07       		.byte	0x7
+  94 0051 EF000000 		.4byte	.LASF7
+  95 0055 03       		.uleb128 0x3
+  96 0056 04       		.byte	0x4
+  97 0057 05       		.byte	0x5
+  98 0058 696E7400 		.ascii	"int\000"
+  99 005c 02       		.uleb128 0x2
+ 100 005d 04       		.byte	0x4
+ 101 005e 07       		.byte	0x7
+ 102 005f 00000000 		.4byte	.LASF8
+ 103 0063 00       		.byte	0
+ 104              		.section	.debug_abbrev,"",%progbits
+ 105              	.Ldebug_abbrev0:
+ 106 0000 01       		.uleb128 0x1
+ 107 0001 11       		.uleb128 0x11
+ 108 0002 01       		.byte	0x1
+ 109 0003 25       		.uleb128 0x25
+ 110 0004 0E       		.uleb128 0xe
+ 111 0005 13       		.uleb128 0x13
+ 112 0006 0B       		.uleb128 0xb
+ 113 0007 03       		.uleb128 0x3
+ 114 0008 0E       		.uleb128 0xe
+ARM GAS  C:\Users\MARK~1.MAR\AppData\Local\Temp\ccoqTBEP.s 			page 3
+
+
+ 115 0009 1B       		.uleb128 0x1b
+ 116 000a 0E       		.uleb128 0xe
+ 117 000b 10       		.uleb128 0x10
+ 118 000c 06       		.uleb128 0x6
+ 119 000d 00       		.byte	0
+ 120 000e 00       		.byte	0
+ 121 000f 02       		.uleb128 0x2
+ 122 0010 24       		.uleb128 0x24
+ 123 0011 00       		.byte	0
+ 124 0012 0B       		.uleb128 0xb
+ 125 0013 0B       		.uleb128 0xb
+ 126 0014 3E       		.uleb128 0x3e
+ 127 0015 0B       		.uleb128 0xb
+ 128 0016 03       		.uleb128 0x3
+ 129 0017 0E       		.uleb128 0xe
+ 130 0018 00       		.byte	0
+ 131 0019 00       		.byte	0
+ 132 001a 03       		.uleb128 0x3
+ 133 001b 24       		.uleb128 0x24
+ 134 001c 00       		.byte	0
+ 135 001d 0B       		.uleb128 0xb
+ 136 001e 0B       		.uleb128 0xb
+ 137 001f 3E       		.uleb128 0x3e
+ 138 0020 0B       		.uleb128 0xb
+ 139 0021 03       		.uleb128 0x3
+ 140 0022 08       		.uleb128 0x8
+ 141 0023 00       		.byte	0
+ 142 0024 00       		.byte	0
+ 143 0025 00       		.byte	0
+ 144              		.section	.debug_aranges,"",%progbits
+ 145 0000 14000000 		.4byte	0x14
+ 146 0004 0200     		.2byte	0x2
+ 147 0006 00000000 		.4byte	.Ldebug_info0
+ 148 000a 04       		.byte	0x4
+ 149 000b 00       		.byte	0
+ 150 000c 0000     		.2byte	0
+ 151 000e 0000     		.2byte	0
+ 152 0010 00000000 		.4byte	0
+ 153 0014 00000000 		.4byte	0
+ 154              		.section	.debug_line,"",%progbits
+ 155              	.Ldebug_line0:
+ 156 0000 19000000 		.section	.debug_str,"MS",%progbits,1
+ 156      02001300 
+ 156      00000201 
+ 156      FB0E0D00 
+ 156      01010101 
+ 157              	.LASF8:
+ 158 0000 756E7369 		.ascii	"unsigned int\000"
+ 158      676E6564 
+ 158      20696E74 
+ 158      00
+ 159              	.LASF5:
+ 160 000d 6C6F6E67 		.ascii	"long unsigned int\000"
+ 160      20756E73 
+ 160      69676E65 
+ 160      6420696E 
+ 160      7400
+ARM GAS  C:\Users\MARK~1.MAR\AppData\Local\Temp\ccoqTBEP.s 			page 4
+
+
+ 161              	.LASF9:
+ 162 001f 474E5520 		.ascii	"GNU C 4.9.3 20141119 (release) [ARM/embedded-4_9-br"
+ 162      4320342E 
+ 162      392E3320 
+ 162      32303134 
+ 162      31313139 
+ 163 0052 616E6368 		.ascii	"anch revision 218278] -mcpu=cortex-m3 -mthumb -gdwa"
+ 163      20726576 
+ 163      6973696F 
+ 163      6E203231 
+ 163      38323738 
+ 164 0085 72662D32 		.ascii	"rf-2 -O0 -fomit-frame-pointer\000"
+ 164      202D4F30 
+ 164      202D666F 
+ 164      6D69742D 
+ 164      6672616D 
+ 165              	.LASF0:
+ 166 00a3 7369676E 		.ascii	"signed char\000"
+ 166      65642063 
+ 166      68617200 
+ 167              	.LASF3:
+ 168 00af 73686F72 		.ascii	"short unsigned int\000"
+ 168      7420756E 
+ 168      7369676E 
+ 168      65642069 
+ 168      6E7400
+ 169              	.LASF2:
+ 170 00c2 73686F72 		.ascii	"short int\000"
+ 170      7420696E 
+ 170      7400
+ 171              	.LASF11:
+ 172 00cc 443A5C6D 		.ascii	"D:\\mm\\Personal\\nxp\\workspace\\proj1\000"
+ 172      6D5C5065 
+ 172      72736F6E 
+ 172      616C5C6E 
+ 172      78705C77 
+ 173              	.LASF7:
+ 174 00ef 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 174      206C6F6E 
+ 174      6720756E 
+ 174      7369676E 
+ 174      65642069 
+ 175              	.LASF1:
+ 176 0106 756E7369 		.ascii	"unsigned char\000"
+ 176      676E6564 
+ 176      20636861 
+ 176      7200
+ 177              	.LASF4:
+ 178 0114 6C6F6E67 		.ascii	"long int\000"
+ 178      20696E74 
+ 178      00
+ 179              	.LASF10:
+ 180 011d 636D7369 		.ascii	"cmsis/core/core_cm3.c\000"
+ 180      732F636F 
+ 180      72652F63 
+ 180      6F72655F 
+ 180      636D332E 
+ARM GAS  C:\Users\MARK~1.MAR\AppData\Local\Temp\ccoqTBEP.s 			page 5
+
+
+ 181              	.LASF6:
+ 182 0133 6C6F6E67 		.ascii	"long long int\000"
+ 182      206C6F6E 
+ 182      6720696E 
+ 182      7400
+ 183              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20141119 (release) [ARM/embedded-4_9-br
+ARM GAS  C:\Users\MARK~1.MAR\AppData\Local\Temp\ccoqTBEP.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 core_cm3.c
+
+NO UNDEFINED SYMBOLS
