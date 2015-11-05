@@ -10,7 +10,7 @@
 
 #include "peripheral_config.h"
 
-#if ( using_OS == 1)
+#if ( using_OS == freeRTOS)
 	//	If using OS, create a thread that blocks until a data is received using
 	//	xQueueReceive( xQueue, &ulReceivedValue, portMAX_DELAY );
 	#include "FreeRTOS.h"
@@ -33,8 +33,10 @@
 	#if (config_GPIO_Interrupt_Count > 0)
 		extern QueueHandle_t gpio_notifier[];
 	#endif
-#else
+#elif (using_OS == no_os)
 
+#else
+	#error "Unknown OS"
 #endif
 
 error_code_t	GPIO_GetIRQ(void *config, void *status);

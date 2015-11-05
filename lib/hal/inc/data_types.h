@@ -16,6 +16,7 @@ typedef enum {
 	NOT_ENOUGH_GPIO_INTERRUPT,
 	GPIO_INTERRUPT_NOT_DEFINED,
 	INVALID_BAUD_RATE,
+	UNITIALIZED_UART,
 	FIFO_INIT_ERROR,
 	FIFO_FULL,
 	FIFO_EMPTY,
@@ -27,6 +28,7 @@ typedef enum {
 	I2C_ERROR,
 	I2C_READ_ERROR,
 	I2C_WRITE_ERROR,
+	SPI_INVALID_FREQUENCY
 } error_code_t;
 
 typedef enum {
@@ -40,5 +42,9 @@ typedef enum {
 	BLOCKING_UNKNOWN
 } blocking_type_t;
 
+typedef enum {
+	ACTIVE_LO,
+	ACTIVE_HI
+} active_signal_level_t;
 
 #endif /* DATA_TYPES_H_ */

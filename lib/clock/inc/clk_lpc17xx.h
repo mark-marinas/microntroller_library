@@ -8,12 +8,20 @@
 #ifndef CLK_LPC17XX_H_
 #define CLK_LPC17XX_H_
 
+
+#include <stdint.h>
+
 extern uint32_t SystemFrequency;
 
-#define PCLKDIV_BY_1		1
-#define PCLKDIV_BY_2		2
-#define PCLKDIV_BY_4		0
-#define PCLKDIV_BY_8		3
 
+typedef enum {
+	PCLKDIV_BY_4,
+	PCLKDIV_BY_1,
+	PCLKDIV_BY_2,
+	PCLKDIV_BY_8
+} system_clock_dividers_t;
+
+void UpdateClockValues(void);
 
 #endif /* CLK_LPC17XX_H_ */
+

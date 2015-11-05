@@ -20,7 +20,7 @@
 #include "uart_lpc17xx.h"
 #include "clk_lpc17xx.h"
 
-#if ( using_OS == 1)
+#if ( using_OS == freeRTOS)
 	#include "stdirq.h"
 	//	If using OS, create a thread that blocks until a data is received using
 	//	xQueueReceive( uartX_notifier, &ulReceivedValue, portMAX_DELAY );
@@ -36,8 +36,10 @@
 	#if (config_UART3_EN == 1)
 		QueueHandle_t uart3_notifier =  NULL  ;
 	#endif
-#else
+#elif (using_OS == no_os)
 	//If no OS, just read the FIFO whenever data is needed.
+#else
+	#error "Unknown OS"
 #endif
 
 
@@ -89,7 +91,7 @@
 
 
 
-void *uart_configs[config_UART0_EN + config_UART1_EN + config_UART2_EN + config_UART3_EN] ;
+void *uart_configs[config_UART0_EN + config_UART1_EN + config_UART2_EN + config_UART3_EN] = { 0 } ;
 
 #if (config_UART_PostHook == 1)
 extern error_code_t UART_Config_PostHook(void *config);
@@ -284,7 +286,7 @@ static void	uart_irqhandler_default (void *data) {
 			} else {
 				error = FIFO_NOT_EMPTY;
 			}
-			#if (using_OS == 1)
+			#if (using_OS == freeRTOS)
 				switch (_config->uart_port) {
 					#if	(config_UART0_EN == 1)
 					case COM0:
@@ -307,6 +309,10 @@ static void	uart_irqhandler_default (void *data) {
 						break;
 					#endif
 				}
+			#elif (using_os == no_os)
+
+			#else
+				#error "Unknow OS"
 			#endif
 			break;
 		case IIR_THRE:
@@ -529,7 +535,7 @@ error_code_t	UART_Config(void *config) {
 	}
 
 	NVIC_EnableIRQ(UART0_IRQn + _config->uart_port);
-	#if ( using_OS == 1)
+	#if ( using_OS == freeRTOS)
 		switch (_config->uart_port) {
 			#if (config_UART0_EN == 1)
 			case COM0:
@@ -552,6 +558,10 @@ error_code_t	UART_Config(void *config) {
 					break;
 			#endif
 		}
+	#elif (using_OS == no_os)
+
+	#else
+		#error "Unknown OS"
 	#endif
 
 	#if (config_UART_PostHook == 1)
@@ -586,6 +596,12 @@ float difftime(time_t t1, time_t t2) {
 
 error_code_t	LPC17XX_UART_GetChar_Default(int uart_port, char *data) {
 	lpc17xx_uart_config_t *_config = uart_configs[uart_port] ;
+
+	if (_config == 0) {
+		return UNITIALIZED_UART;
+	}
+
+
 	if (_config->block_type == BLOCKING ) {
 
 			while ( FIFO_Get( &(_config->buffer->uart_rx_fifo), data) == FIFO_EMPTY ) ;
@@ -605,6 +621,11 @@ error_code_t	LPC17XX_UART_GetChar_Default(int uart_port, char *data) {
 
 error_code_t	LPC17XX_UART_PutChar_Default(int uart_port, char  data) {
 	lpc17xx_uart_config_t *_config = uart_configs[uart_port];
+
+	if (_config == 0) {
+		return UNITIALIZED_UART;
+	}
+
 	char first_data;
 	wait_thre_disabled(uart_port);
 	while ( FIFO_Put( &(_config->buffer->uart_tx_fifo), &data) == FIFO_FULL) ;
@@ -640,6 +661,10 @@ error_code_t	LPC17XX_UART_PutChars_Default(int uart_port, char *data, int size) 
 	int index = 0;
 	int _size = size;
 	char first_data;
+
+	if (_config == 0) {
+		return UNITIALIZED_UART;
+	}
 
 	while (_size > 0) {
 		wait_thre_disabled(uart_port);

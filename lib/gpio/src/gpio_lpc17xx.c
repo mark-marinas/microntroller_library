@@ -28,13 +28,17 @@ static error_code_t GPIO_SetInterrupt(lpc17xx_gpio_config_t *config);
 static void GPIO_IrqHandler(void *data);
 
 
-#if ( using_OS == 1)
+#if (using_OS == no_os)
+
+#elif ( using_OS == freeRTOS)
 	#include "stdirq.h"
 	//	If using OS, create a thread that blocks until an interrupt is received using
 	//	xQueueReceive( gpio_notifier[idx], &ulReceivedValue, portMAX_DELAY );
 	#if (config_GPIO_Interrupt_Count > 0)
 		QueueHandle_t gpio_notifier[config_GPIO_Interrupt_Count] = { 0 };
 	#endif
+#else
+	#error "Unknown OS"
 #endif
 
 
@@ -150,15 +154,16 @@ static void GPIO_Interrupt_Clear(port_number_t port, pin_number_t pin) {
 
 
 static void GPIO_IrqHandler(void *data) {
-
-	#if (using_OS == 1 && config_GPIO_Interrupt_Count > 0 )
+	#if ( using_OS == no_OS)
+		//Does nothing when not running in OS Mode.
+		//Application can monitor
+		//gpio_irq_data.ids[i].pending_interrupt
+	#elif (using_OS == freeRTOS && config_GPIO_Interrupt_Count > 0 )
 		irq_id_t *id = data;
 		uint32_t info = id->pending_interrupt | (id->port << 8 ) | (id->port << 16);
 		xQueueSend( gpio_notifier[id->idx], &info, 0U );
 	#else
-		//Does nothing when not running in OS Mode.
-		//Application can monitor
-		//gpio_irq_data.ids[i].pending_interrupt
+		#error "Unknown OS"
 	#endif
 }
 
@@ -248,8 +253,12 @@ static error_code_t GPIO_SetInterrupt(lpc17xx_gpio_config_t *config) {
 	gpio_irq_data.ids[gpio_irq_data.used].pending_interrupt = INTERRUPT_DISABLED;
 	gpio_irq_data.ids[gpio_irq_data.used].interrupt_type = config->Interrupt_Type ;
 	gpio_irq_data.ids[gpio_irq_data.used].idx = gpio_irq_data.used;
-	#if ( using_OS == 1 && config_GPIO_Interrupt_Count > 0)
+	#if (using_os == no_os)
+
+	#elif ( using_OS == 1 && config_GPIO_Interrupt_Count > 0)
 				gpio_notifier[gpio_irq_data.used] = xQueueCreate( 1, sizeof( uint32_t ) );
+	#else
+				#error	"Unknown OS"
 	#endif
 	gpio_irq_data.used++;
 

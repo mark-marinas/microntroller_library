@@ -80,10 +80,12 @@ SRC	= ./cmsis/device/system_LPC17xx.c \
 	  ./app/vectors_lpc1768.c \
 	  ./lib/gpio/src/gpio_lpc17xx.c \
 	  ./lib/uart/src/uart_lpc17xx.c \
+	  ./lib/clock/src/clk_lpc17xx.c \
 	  ./lib/i2c/src/i2c_lpc17xx.c \
+	  ./lib/spi/src/spi_lpc17xx.c \
 	  ./lib/hal/src/stdirq.c \
 	  ./utils/src/utils.c \
-	  ./utils/src/fifo.c \
+	  ./utils/src/fifo.c 
 
 	  
 ifeq ($(BAREBONE), 1)
@@ -126,6 +128,7 @@ UINCDIR  = ./freeRTOS/portable/ARM_CM3 \
 		   ./lib/uart/inc \
 		   ./lib/i2c/inc \
 		   ./lib/clock/inc \
+		   ./lib/spi/inc \
 		   ./app \
 		   ./lib/gpio/inc \
 		   ./utils/inc 

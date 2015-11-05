@@ -12,6 +12,7 @@
 	#include "uart_lpc17xx.h"
 	#include "i2c_lpc17xx.h"
 	#include "gpio_lpc17xx.h"
+	#include "spi_lpc17xx.h"
 #endif
 
 
@@ -86,5 +87,32 @@ void I2C1_IRQHandler(void) {
 void I2C0_IRQHandler(void) {
 	i2c_config_t * _i = i2c_configs[2];
 	_i->irqhandler(_i);
+}
+#endif
+
+/*
+ * **************************************************
+ * 	SPI INTERRUPT HANDLERS
+ * 	**************************************************
+ */
+extern void *spi_configs[] ;
+#if (config_SPI0_EN == 1)
+void SPI_IRQHandler (void) {
+	lpc17xx_spi_config_t *s = spi_configs[0];
+	s->irqhandler(s);
+}
+#endif
+
+#if (config_SSPI0_EN == 1)
+void SSP0_IRQHandler (void) {
+	lpc17xx_spi_config_t *s = spi_configs[1];
+	s->irqhandler(s);
+}
+#endif
+
+#if (config_SSPI1_EN == 1)
+void SSP1_IRQHandler (void) {
+	lpc17xx_spi_config_t *s = spi_configs[2];
+	s->irqhandler(s);
 }
 #endif
