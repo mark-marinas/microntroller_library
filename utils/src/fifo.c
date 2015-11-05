@@ -76,7 +76,7 @@ error_code_t FIFO_Init(fifo_t *fifo, int size, void *buffer, void (*fn_fifo_get)
 	return NO_ERROR;
 }
 
-error_code_t FIFO_ISFull(fifo_t *fifo) {
+static error_code_t FIFO_ISFull(fifo_t *fifo) {
 	int next = FIFO_GetNext(fifo, fifo->tail);
 	if (fifo->head == next) {
 		return FIFO_FULL;
@@ -84,9 +84,14 @@ error_code_t FIFO_ISFull(fifo_t *fifo) {
 	return NO_ERROR;
 }
 
-error_code_t FIFO_ISEmpty(fifo_t *fifo) {
+static error_code_t FIFO_ISEmpty(fifo_t *fifo) {
 	if (fifo->head == fifo->tail) {
 		return FIFO_EMPTY;
 	}
+	return NO_ERROR;
+}
+
+error_code_t FIFO_Clr(fifo_t *fifo) {
+	fifo->head = fifo->tail = 0;
 	return NO_ERROR;
 }
