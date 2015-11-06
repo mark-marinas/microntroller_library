@@ -49,6 +49,19 @@ typedef enum {
 	SPI_13_BITS,
 	SPI_14_BITS,
 	SPI_15_BITS,
+	SSPI_4_BITS = 3,
+	SSPI_5_BITS,
+	SSPI_6_BITS,
+	SSPI_7_BITS,
+	SSPI_8_BITS,
+	SSPI_9_BITS,
+	SSPI_10_BITS,
+	SSPI_11_BITS,
+	SSPI_12_BITS,
+	SSPI_13_BITS,
+	SSPI_14_BITS,
+	SSPI_15_BITS,
+	SSPI_16_BITS,
 } spi_bitlen_t;
 
 typedef struct {

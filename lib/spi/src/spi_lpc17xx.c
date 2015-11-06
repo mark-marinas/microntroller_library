@@ -11,6 +11,7 @@
 #include "gpio_lpc17xx.h"
 #include "clk_lpc17xx.h"
 #include "spi_lpc17xx.h"
+#include "utils.h"
 
 typedef struct {
 	pin_func_t func;
@@ -54,6 +55,7 @@ void *spi_configs[config_SPI0_EN + config_SSPI0_EN + config_SSPI1_EN];
 	typedef struct {
 		int clk_div;
 		uint32_t spi_counter;
+		uint32_t spi_divisor;
 	} spi_clkdiv_t;
 
 	int SPI_GetCounterVal(int min_counter, uint32_t systemfreq, uint32_t spi_freq, int div) {
@@ -118,6 +120,64 @@ void *spi_configs[config_SPI0_EN + config_SSPI0_EN + config_SSPI1_EN];
 		((spi_clkdiv_t *)spi_div)->spi_counter = spi_counter;
 		return error;
 	}
+
+	/*
+	freq = ( PCLK / (CPSDVSR * [SCR+1])
+
+	scr is 8 bits, and so is CPSDVSR
+
+	assume a PCLK divisor.
+	assume a CPSDVSR (even number only) .
+	calculate SCR, round up.
+
+	freq * cpsdvsr * (scr + 1) = pclk
+	scr = (pclk/(freq*cpsdvsr)) - 1
+	scr = 25M/(8MHz*2) - 1
+	*/
+	int SSPI_GetCounterVal(uint32_t systemfreq, uint32_t spi_freq, int div, spi_clkdiv_t *clkdiv) {
+		uint32_t sspi_clock = systemfreq/div;
+		uint8_t cpsdvr;
+		uint32_t scr;
+		uint8_t div_found = 1;
+		for (cpsdvr = 2; cpsdvr <=254; cpsdvr+=2) {
+			scr = (sspi_clock/(spi_freq * cpsdvr) ) - 1;
+			if ((scr + 1) < 0xFF ) {
+				div_found = 1;
+				break;
+			}
+		}
+		if (div_found) {
+			clkdiv->spi_counter = scr;
+			clkdiv->spi_divisor = cpsdvr;
+		} else {
+			return 1;
+		}
+		return 0;
+	}
+
+	error_code_t SSPI_GetDividers(lpc17xx_spi_config_t *config, void *spi_div) {
+		error_code_t error = NO_ERROR;
+
+		spi_clkdiv_t *clkdiv = spi_div;
+
+		UpdateClockValues();
+		if ( (SSPI_GetCounterVal(SystemFrequency, config->freq, 1, clkdiv)) == 0 ) {
+			clkdiv->clk_div = PCLKDIV_BY_1;
+			return error;
+		} else if ( (SSPI_GetCounterVal(SystemFrequency, config->freq, 2, clkdiv)) == 0 ) {
+			clkdiv->clk_div = PCLKDIV_BY_2;
+			return error;
+		} else if ( (SSPI_GetCounterVal(SystemFrequency, config->freq, 4, clkdiv)) == 0 ) {
+			clkdiv->clk_div = PCLKDIV_BY_4;
+			return error;
+		} else if ( (SSPI_GetCounterVal(SystemFrequency, config->freq, 8, clkdiv)) == 0 ) {
+			clkdiv->clk_div = PCLKDIV_BY_8;
+			return error;
+		}
+
+
+		return SPI_INVALID_FREQUENCY;
+	}
 #else
 
 #endif
@@ -126,9 +186,46 @@ error_code_t	SPI_Config(void *config) {
 	error_code_t error = NO_ERROR;
 	spi_clkdiv_t spi_div;
 	lpc17xx_spi_config_t *_config = config;
+	spi_map_t *spi_map = (spi_map_t *) &(lpc17xx_i2c_map[_config->port]);
 
-	if ( ( error = SPI_GetDividers(_config, &spi_div) ) != NO_ERROR ) {
+	if ( ( error = ((_config->port == SPI0) ? SPI_GetDividers(_config, &spi_div) : SSPI_GetDividers(_config, &spi_div))  ) != NO_ERROR ) {
 		return error;
+	} else {
+		//Write the Clock divider
+		if (_config->port == SPI0 || _config->port == SSPI1) {
+			error = WriteReg ( &LPC_SC->PCLKSEL0, spi_div.clk_div, spi_map->clk_lsb,  spi_map->clk_lsb + 1 );
+		} else {
+			error = WriteReg ( &LPC_SC->PCLKSEL1, spi_div.clk_div, spi_map->clk_lsb,  spi_map->clk_lsb + 1 );
+		}
+
+		uint32_t control = 0;
+		switch (_config->port) {
+			case SPI0:
+				//And the counters.
+				LPC_SPI->SPCCR = spi_div.spi_counter & 0xF ;
+				//And the control registers. Interrupt is hardcoded.
+				control = (_config->clk_phase << 3 ) | (_config->clk_polarity << 4) | (_config->mode << 5) | (_config->lsbf << 6) |
+						  (1 << 7) | (_config->bits << 8);
+				WriteReg ( &(LPC_SPI->SPCR), control, 0, 31);
+				break;
+			case SSPI0:
+				//And the counters.
+				LPC_SSP0->CPSR = spi_div.spi_divisor;
+				WriteReg ( &(LPC_SSP0->CR0), spi_div.spi_counter, 8, 15);
+				//and control registers.
+				control = LPC_SSP0->CR0 | (_config->bits) | (0 << 4) | (_config->clk_polarity << 6) | (_config->clk_phase << 7);
+				WriteReg ( &(LPC_SSP0->CR0), control, 0, 31 );
+				control = (1 << 1) | (_config->mode << 2) ;
+				WriteReg ( &(LPC_SSP0->CR1), control, 0, 31);
+				break;
+			case SSPI1:
+				//And the counters.
+				//and control registers.
+				LPC_SSP1->CPSR = spi_div.spi_divisor;
+				WriteReg (&(LPC_SSP1->CR0), spi_div.spi_counter, 8, 15);
+				break;
+		}
+
 	}
 
 
