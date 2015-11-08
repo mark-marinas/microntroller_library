@@ -68,14 +68,50 @@ typedef struct {
 	spi_port_t		port;
 	spi_cpol_t 		clk_polarity;
 	spi_cpha_t 		clk_phase;
-	active_signal_level_t slave_sel_polarity;
 	spi_lsbf_t 		lsbf;
 	spi_mode_t		mode;
 	spi_bitlen_t	bits;
 	uint32_t		freq;
+	void 			*buffer;
 	void			(*irqhandler)(void *);
+	uint16_t	dummyData;
 } lpc17xx_spi_config_t;
 
 typedef lpc17xx_spi_config_t spi_config_t;
+
+typedef enum {
+	SPI_READ = 1,
+	SPI_WRITE
+} spi_operation_t;
+
+typedef enum {
+	SPI_BUSY,
+	SPI_READY_PASS,
+	SPI_READY_FAIL
+} spi_status_t;
+
+typedef struct {
+	uint16_t writeReg;
+	uint16_t *writeBuffer;
+	int			  writeDataSize;
+	int				writeRegValid;
+	
+	uint16_t readReg;
+	uint16_t *readBuffer;
+	int				readDataSize;
+	int				readRegValid;
+	
+	int 			operation;
+	int 			dataCounter;
+	spi_status_t status;
+} spi_command_t;
+
+typedef enum {
+	SPI_IRQ_ABORT=3,
+	SPI_IRQ_MODF,
+	SPI_IRQ_ROVR,
+	SPI_IRQ_WCOL,
+	SPI_IRQ_SPIF
+} spi_irq_type;
 
 #endif /* LPC17XX_SPI_H_ */

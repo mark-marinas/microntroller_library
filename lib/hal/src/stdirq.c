@@ -98,21 +98,23 @@ void I2C0_IRQHandler(void) {
 extern void *spi_configs[] ;
 #if (config_SPI0_EN == 1)
 void SPI_IRQHandler (void) {
-	lpc17xx_spi_config_t *s = spi_configs[0];
+	spi_config_t *s = spi_configs[0];
 	s->irqhandler(s);
 }
 #endif
 
 #if (config_SSPI0_EN == 1)
 void SSP0_IRQHandler (void) {
-	lpc17xx_spi_config_t *s = spi_configs[1];
+	spi_config_t *s = spi_configs[1];
 	s->irqhandler(s);
 }
 #endif
 
 #if (config_SSPI1_EN == 1)
 void SSP1_IRQHandler (void) {
-	lpc17xx_spi_config_t *s = spi_configs[2];
+	spi_config_t *s = spi_configs[2];
 	s->irqhandler(s);
 }
 #endif
+
+

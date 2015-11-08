@@ -14,7 +14,7 @@
 #include "stdperip.h"
 #include "uart_lpc17xx.h"
 #include "i2c_lpc17xx.h"
-
+#include "spi_lpc17xx.h"
 
 int main( void )
 {
@@ -23,6 +23,9 @@ int main( void )
 	gpio_config_t key1;
 	i2c_config_t i2c0;
 	i2c_command_t command;
+	spi_config_t spi0;
+	spi_command_t spi_cmd;
+
 
 	error_code_t error;
 	uart0.baudrate = B2400;
@@ -51,6 +54,23 @@ int main( void )
 	i2c0.buffer = 0;
 	i2c0.irqhandler = 0;
 
+	spi0.bits = SPI_8_BITS;
+	spi0.buffer = 0;
+	spi0.clk_phase = SPI_PHASE_INPHASE;
+	spi0.clk_polarity = SPI_CLK_RISING;
+	spi0.freq = 5e6;
+	spi0.irqhandler = 0;
+	spi0.lsbf = MSB_FIRST;
+	spi0.mode = SPI_MASTER;
+	spi0.port = SPI0;
+	spi0.dummyData = 0x00;
+
+	//gpio_config_t ssel = {PORT0, PIN16, OUTPUT, INTERRUPT_DISABLED, PULLUP_PULLDOWN_DISABLED, PIN_MODE_OPEN_DRAIN_NORMAL, 0, 0, 0 };
+	//GPIO_Config(&ssel);
+	//GPIO_SetLevel(&ssel, LO);
+	//GPIO_SetLevel(&ssel, HI);
+
+#if (1)
 	if ( (error = GPIO_Config(&key1)) != NO_ERROR ) {
 		while (1);
 	}
@@ -62,6 +82,47 @@ int main( void )
 	if ( (error = I2C_Config(&i2c0)) != NO_ERROR ) {
 		while (1);
 	}
+#endif
+
+	#if (1)
+	if ( (error = SPI_Config(&spi0)) != NO_ERROR ) {
+		while (1);
+	}
+
+	/* READ ID USING READ-ID */
+	//Write Register.
+	spi_cmd.writeReg = 0x90;
+	spi_cmd.writeRegValid = 1;
+	uint16_t write_data[] = {0x00, 0x00, 0x00  };
+	spi_cmd.writeBuffer = write_data;
+	spi_cmd.writeDataSize = sizeof(write_data);
+
+	//Read Register.
+	uint16_t read_data[4];
+	spi_cmd.readReg = 0x00;
+	spi_cmd.readRegValid = 0;
+	spi_cmd.readBuffer = read_data;
+	spi_cmd.readDataSize = sizeof(read_data);
+
+	spi_cmd.operation = SPI_WRITE | SPI_READ; //back to back.
+
+	error = SPI_Write(SPI0, &spi_cmd);
+	if (error != NO_ERROR) {
+		while (1);
+	}
+
+	/* READ ID USING JEDEC READ */
+	uint16_t read_data_jedec[4];
+	spi_cmd.readReg = 0x9F;
+	spi_cmd.readRegValid = 1;
+	spi_cmd.readBuffer = read_data_jedec;
+	spi_cmd.readDataSize = sizeof(read_data_jedec);
+	error = SPI_Read(SPI0, &spi_cmd);
+	if (error != NO_ERROR) {
+		while (1);
+	}
+
+	#endif
 	UART_PutChars(COM0, "InitDone\n\r",10);
 
 

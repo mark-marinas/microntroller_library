@@ -25,8 +25,8 @@ error_code_t	UART_PutChars(int uart_port, char *data, int size);
 
 //SPI
 error_code_t	SPI_Config(void *config);
-error_code_t	SPI_Read(void *config, void *data, int size);
-error_code_t	SPI_Write(void *config, void *data, int size);
+error_code_t	SPI_Read (int spi_port, void *data);
+error_code_t	SPI_Write(int spi_port, void *data);
 
 //I2C
 error_code_t	I2C_Config(void *config);

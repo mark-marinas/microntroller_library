@@ -134,6 +134,8 @@ int main( void )
 	gpio_config_t key1;
 	i2c_config_t i2c0;
 	i2c_command_t command;
+	spi_config_t spi0;
+	spi_command_t spi_cmd;
 
 	error_code_t error;
 	uart0.baudrate = B2400;
@@ -162,6 +164,16 @@ int main( void )
 	i2c0.buffer = 0;
 	i2c0.irqhandler = 0;
 
+	spi0.bits = SPI_8_BITS;
+	spi0.buffer = 0;
+	spi0.clk_phase = SPI_PHASE_INPHASE;
+	spi0.clk_polarity = SPI_CLK_RISING;
+	spi0.freq = 5e6;
+	spi0.irqhandler = 0;
+	spi0.lsbf = MSB_FIRST;
+	spi0.mode = SPI_MASTER;
+	spi0.port = SPI0;
+
 	if ( (error = GPIO_Config(&key1)) != NO_ERROR ) {
 		while (1);
 	}
@@ -173,9 +185,40 @@ int main( void )
 	if ( (error = I2C_Config(&i2c0)) != NO_ERROR ) {
 		while (1);
 	}
+
+	if ( (error = SPI_Config(&i2c0)) != NO_ERROR ) {
+		while (1);
+	}
+
+	//Write the address.
+	uint8_t data[4] = {0x90, 0x00, 0x00, 0x00};
+	spi_cmd.data = data;
+	spi_cmd.operation = SPI_WRITE;
+	spi_cmd.size = 4;
+
+	error = SPI_Write(SPI0, &spi_cmd);
+	if (error != NO_ERROR) {
+		while (1);
+	}
+
+	uint8_t data[4] = {0x90, 0x00, 0x00, 0x00};
+	spi_cmd.data = data;
+	spi_cmd.operation = SPI_READ;
+	spi_cmd.size = 3;
+	error = SPI_Read(SPI0, &spi_cmd);
+	if (error != NO_ERROR) {
+		while (1);
+	}
+
 	UART_PutChars(COM0, "InitDone\n\r",10);
 
-#if (1)
+
+
+
+
+
+
+
 	int size = 18;
 	char fw_version[18] = "PowerAvrVersion5.5";
 	char fw_version_read[18] = { 0 };
@@ -230,7 +273,6 @@ int main( void )
 	UART_PutChars(COM0, "ReadDone\n\r",10);
 	UART_PutChars(COM0, &(fw_version_read[0]), size/*11*/);
 	UART_PutChars(COM0, (char*) "\n\r", 2);
-#endif
 
 	pin_interrupt_type_t key1_status;
 	char rising_str[] = "Rising  Edge\n\r"; //14
