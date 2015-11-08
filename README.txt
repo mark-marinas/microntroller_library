@@ -6,9 +6,10 @@ Implemented Features:
 GPIO - Normal I/O, interrupt
 UART
 I2C
+SPI
 
 Hoping to implement the following features next:
-SPI
+SSPI
 ADC/DAC
 Timers
 
