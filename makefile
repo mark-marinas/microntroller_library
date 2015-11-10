@@ -85,7 +85,8 @@ SRC	= ./cmsis/device/system_LPC17xx.c \
 	  ./lib/spi/src/spi_lpc17xx.c \
 	  ./lib/hal/src/stdirq.c \
 	  ./utils/src/utils.c \
-	  ./utils/src/fifo.c 
+	  ./utils/src/fifo.c \
+	  ./utils/src/uc_stdio.c 
 
 	  
 ifeq ($(BAREBONE), 1)

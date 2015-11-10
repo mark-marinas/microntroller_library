@@ -15,6 +15,7 @@
 #include "uart_lpc17xx.h"
 #include "i2c_lpc17xx.h"
 #include "spi_lpc17xx.h"
+#include "uc_stdio.h"
 
 int main( void )
 {
@@ -65,12 +66,6 @@ int main( void )
 	spi0.port = SPI0;
 	spi0.dummyData = 0x00;
 
-	//gpio_config_t ssel = {PORT0, PIN16, OUTPUT, INTERRUPT_DISABLED, PULLUP_PULLDOWN_DISABLED, PIN_MODE_OPEN_DRAIN_NORMAL, 0, 0, 0 };
-	//GPIO_Config(&ssel);
-	//GPIO_SetLevel(&ssel, LO);
-	//GPIO_SetLevel(&ssel, HI);
-
-#if (1)
 	if ( (error = GPIO_Config(&key1)) != NO_ERROR ) {
 		while (1);
 	}
@@ -78,16 +73,17 @@ int main( void )
 	if ( (error = UART_Config(&uart0)) != NO_ERROR) {
 		while (1);
 	}
+	SetDebug_Port(COM0);
 
 	if ( (error = I2C_Config(&i2c0)) != NO_ERROR ) {
 		while (1);
 	}
-#endif
 
-	#if (1)
 	if ( (error = SPI_Config(&spi0)) != NO_ERROR ) {
 		while (1);
 	}
+
+	uc_printf ("Uart0 Initialized\n\r");
 
 	/* READ ID USING READ-ID */
 	//Write Register.
@@ -110,6 +106,7 @@ int main( void )
 	if (error != NO_ERROR) {
 		while (1);
 	}
+	uc_printf ("SPI Flash Device ID(READ-ID) %d %d %d %d\n\r", read_data[0], read_data[1], read_data[2], read_data[3]);
 
 	/* READ ID USING JEDEC READ */
 	uint16_t read_data_jedec[4];
@@ -121,10 +118,7 @@ int main( void )
 	if (error != NO_ERROR) {
 		while (1);
 	}
-
-	#endif
-	UART_PutChars(COM0, "InitDone\n\r",10);
-
+	uc_printf ("SPI Flash Device ID(Jedec) %d %d %d %d\n\r", read_data_jedec[0], read_data_jedec[1], read_data_jedec[2], read_data_jedec[3]);
 
 	int size = 18;
 	char fw_version[18] = "PowerAvrVersion5.5";
