@@ -2,7 +2,7 @@
  * lpc17xx_spi.c
  *
  *  Created on: Nov 5, 2015
- *      Author: mark.marinas
+ *      Author: mmarinas
  */
 
 #include <stdint.h>
@@ -49,7 +49,8 @@ static spi_map_t lpc17xx_spi_map[] = {
 };
 
 
-void *spi_configs[config_SPI0_EN + config_SSPI0_EN + config_SSPI1_EN];
+//void *spi_configs[config_SPI0_EN + config_SSPI0_EN + config_SSPI1_EN];
+void *spi_configs[3];
 
 
 

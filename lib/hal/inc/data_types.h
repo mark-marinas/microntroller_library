@@ -2,7 +2,7 @@
  * data_types.h
  *
  *  Created on: Oct 26, 2015
- *      Author: mark.marinas
+ *      Author: mmarinas
  */
 
 #ifndef DATA_TYPES_H_
@@ -30,7 +30,8 @@ typedef enum {
 	I2C_WRITE_ERROR,
 	SPI_INVALID_FREQUENCY,
 	SPI_WRITE_ERROR,
-	SPI_READ_ERROR
+	SPI_READ_ERROR,
+	INVALID_ADC_SAMPLING_RATE
 } error_code_t;
 
 typedef enum {

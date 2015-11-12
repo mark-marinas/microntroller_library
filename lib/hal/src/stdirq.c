@@ -2,7 +2,7 @@
  * stdirq.c
  *
  *  Created on: Oct 27, 2015
- *      Author: mark.marinas
+ *      Author: mmarinas
  */
 
 #include "peripheral_config.h"
@@ -13,6 +13,7 @@
 	#include "i2c_lpc17xx.h"
 	#include "gpio_lpc17xx.h"
 	#include "spi_lpc17xx.h"
+	#include "adc_lpc17xx.h"
 #endif
 
 
@@ -117,4 +118,12 @@ void SSP1_IRQHandler (void) {
 }
 #endif
 
+/*
+ * **************************************************
+ * 	ADC INTERRUPT HANDLERS
+ * 	**************************************************
+ */
 
+void ADC_IRQHandler(void) {
+	ADC_Generic_IRQ_Handler();
+}

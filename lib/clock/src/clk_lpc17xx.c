@@ -2,7 +2,7 @@
  * clk_lpc17xx.c
  *
  *  Created on: Nov 5, 2015
- *      Author: mark.marinas
+ *      Author: mmarinas
  */
 
 #include "clk_lpc17xx.h"

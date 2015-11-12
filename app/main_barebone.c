@@ -2,9 +2,8 @@
  * main_barebone.c
  *
  *  Created on: Nov 4, 2015
- *      Author: mark.marinas
+ *      Author: mmarinas
  */
-
 
 
 #include "LPC17xx.h"
@@ -15,6 +14,7 @@
 #include "uart_lpc17xx.h"
 #include "i2c_lpc17xx.h"
 #include "spi_lpc17xx.h"
+#include "adc_lpc17xx.h"
 #include "uc_stdio.h"
 
 int main( void )
@@ -26,10 +26,11 @@ int main( void )
 	i2c_command_t command;
 	spi_config_t spi0;
 	spi_command_t spi_cmd;
+	adc_config_t adc5;
 
 
 	error_code_t error;
-	uart0.baudrate = B2400;
+	uart0.baudrate = B115200;
 	uart0.block_type = NON_BLOCKING;
 	uart0.buffer = 0;
 	uart0.irqhandler = 0;
@@ -66,6 +67,12 @@ int main( void )
 	spi0.port = SPI0;
 	spi0.dummyData = 0x00;
 
+	adc5.channel = ADC_CHANNEL5;
+	adc5.rate = 200e3;
+	adc5.trigger_mode = MANUAL;
+	adc5.irqhandler = 0;
+
+
 	if ( (error = GPIO_Config(&key1)) != NO_ERROR ) {
 		while (1);
 	}
@@ -80,6 +87,10 @@ int main( void )
 	}
 
 	if ( (error = SPI_Config(&spi0)) != NO_ERROR ) {
+		while (1);
+	}
+
+	if ( (error = ADC_Config(&adc5)) != NO_ERROR ) {
 		while (1);
 	}
 
@@ -129,11 +140,10 @@ int main( void )
 	command.reg = 0x00;
 	command.size = 1; //11;
 
-	int i, j;
+	int i, j, k;
 	for (j=0; j<1; j++) {
 		for (i=0; i<size;i++) {
 			//UART_PutChars(COM0,"Writing", 9);
-			UART_PutChars(COM0,".", 1);
 			command.reg = 0x00 + i;
 			command.size = 1;
 			command.data = &(fw_version[i]);
@@ -141,13 +151,17 @@ int main( void )
 			if (error != NO_ERROR) {
 				break;
 			}
+			//This is to cause a delay after write. This should be replaced with the wait in the I2C_Write Operation.
+			for (k=0; k<16; k++) {
+				uc_printf(".");
+				uc_printf("\b");
+			}
 		}
 		if (error != NO_ERROR) {
 			while (1);
 		}
 	}
-	UART_PutChars(COM0, "WritDone\n\r",10);
-
+	uc_printf("I2C Write Done\n\r");
 
 	command.operation = READ;
 	command.data = fw_version_read;
@@ -170,30 +184,35 @@ int main( void )
 		}
 	}
 
-	UART_PutChars(COM0, "ReadDone\n\r",10);
-	UART_PutChars(COM0, &(fw_version_read[0]), size);
-	UART_PutChars(COM0, (char*) "\n\r", 2);
+	uc_printf("I2C Read Done\n\r");
+	for (i=0; i<size; i++) {
+		uc_printf("%c",fw_version_read[i]);
+	}
+	uc_printf("\n\r");
 
 	pin_interrupt_type_t key1_status;
-	char rising_str[] = "Rising  Edge\n\r";
-	char falling_str[] ="Falling Edge\n\r";
 	while (1) {
 		error = GPIO_GetIRQ(&key1, &key1_status);
 		if (error != NO_ERROR) {
 			while (1);
 		}
 		if (key1_status == INTERRUPT_ENABLED_FALLING) {
-			UART_PutChars(COM0, falling_str, 14);
+			uc_printf ("Falling Edge\n\r");
 			error = GPIO_ClrIRQ(&key1);
 			if (error != NO_ERROR) {
 				while (1);
 			}
+			ADC_Read(&adc5);
 		} else if (key1_status == INTERRUPT_ENABLED_RISING) {
-			UART_PutChars(COM0, rising_str, 14);
+			uc_printf ("Rising Edge\n\r");
 			error = GPIO_ClrIRQ(&key1);
 			if (error != NO_ERROR) {
 				while (1);
 			}
+		}
+		if (adc5.done) {
+			uc_printf ("%d\n\r", adc5.result);
+			adc5.done = 0;
 		}
 	}
 

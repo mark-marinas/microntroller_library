@@ -2,7 +2,7 @@
  * gpio_lpc17xx.c
  *
  *  Created on: Oct 26, 2015
- *      Author: mark.marinas
+ *      Author: mmarinas
  */
 
 #include "data_types.h"
@@ -95,7 +95,7 @@ error_code_t GPIO_Set_Direction(lpc17xx_gpio_config_t *config) {
 		default:
 			return INVALID_PORT_NUMBER;
 	}
-	return WriteReg( &((config->Pin_Typedef)->FIODIR), config->Direction, config->Pin, config->Pin + 1  );
+	return WriteReg( &((config->Pin_Typedef)->FIODIR), config->Direction, config->Pin, config->Pin);
 }
 
 

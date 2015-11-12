@@ -2,7 +2,7 @@
  * peripheral_config.h
  *
  *  Created on: Oct 27, 2015
- *      Author: mark.marinas
+ *      Author: mmarinas
  */
 
 #ifndef PERIPHERAL_CONFIG_H_
@@ -77,5 +77,18 @@
 #define config_SSPI1_EN					0
 #define SPI_Read						LPC17XX_SPI_Read_default
 #define SPI_Write						LPC17XX_SPI_Write_default
+
+//ADC
+#define config_ADC_PostHook				0
+#define	config_ADC0_En					0
+#define	config_ADC1_En					0
+#define	config_ADC2_En					0
+#define	config_ADC3_En					0
+#define	config_ADC4_En					0
+#define	config_ADC5_En					1
+#define	config_ADC6_En					0
+#define	config_ADC7_En					0
+
+#define ADC_Generic_IRQ_Handler			LPC17XX_ADC_IRQ_Handler_Default
 
 #endif /* PERIPHERAL_CONFIG_H_ */

@@ -2,7 +2,7 @@
  * i2c_lpc17xx.c
  *
  *  Created on: Nov 2, 2015
- *      Author: mark.marinas
+ *      Author: mmarinas
  */
 
 #include "gpio_lpc17xx.h"
@@ -36,7 +36,8 @@ static const i2c_map_t lpc17xx_i2c_map[] = {
 		},
 };
 
-void *i2c_configs[config_I2C0_EN + config_I2C1_EN + config_I2C2_EN] ;
+//void *i2c_configs[config_I2C0_EN + config_I2C1_EN + config_I2C2_EN] ;
+void *i2c_configs[3] ;
 
 #if (config_I2C_GetDivHook == 0)
 i2c_clkdiv_t i2c_clk_divs[] = {

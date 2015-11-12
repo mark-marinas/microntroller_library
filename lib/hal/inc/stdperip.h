@@ -2,7 +2,7 @@
  * stdperip.h
  *
  *  Created on: Oct 26, 2015
- *      Author: mark.marinas
+ *      Author: mmarinas
  */
 
 #ifndef STDPERIP_H_
@@ -32,6 +32,10 @@ error_code_t	SPI_Write(int spi_port, void *data);
 error_code_t	I2C_Config(void *config);
 error_code_t	I2C_Read(int i2c_port, void *data);
 error_code_t	I2C_Write(int i2c_port, void *data);
+
+//ADC
+error_code_t 	ADC_Config(void *config);
+error_code_t	ADC_Read(void *config);
 
 
 #endif /* STDPERIP_H_ */

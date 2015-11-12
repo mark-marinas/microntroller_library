@@ -2,7 +2,7 @@
  * uart_lpc17xx.c
  *
  *  Created on: Oct 27, 2015
- *      Author: mark.marinas
+ *      Author: mmarinas
  */
 
 

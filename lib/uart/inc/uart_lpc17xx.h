@@ -2,7 +2,7 @@
  * uart_lpc17xx.h
  *
  *  Created on: Oct 27, 2015
- *      Author: mark.marinas
+ *      Author: mmarinas
  */
 #include "data_types.h"
 #include "fifo.h"

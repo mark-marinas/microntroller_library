@@ -2,7 +2,7 @@
  * gpio_lpc17xx.h
  *
  *  Created on: Oct 26, 2015
- *      Author: mark.marinas
+ *      Author: mmarinas
  */
 
 #ifndef GPIO_LPC17XX_H_

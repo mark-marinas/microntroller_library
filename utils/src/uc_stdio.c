@@ -27,6 +27,7 @@ int print_int(uint32_t dec) {
 	int count = 0;
 	int _dec = dec;
 	int digit;
+	int first = 1;
 
 	if (dec == 0xbf) {
 		digit  = 1;
@@ -40,6 +41,9 @@ int print_int(uint32_t dec) {
 			UART_PutChar(debug_port, dec2char(digit));
 			_dec  -= biggest*digit;
 			count++;
+			first = 0;
+		} else if (first == 0) {
+			UART_PutChar(debug_port, '0');
 		}
 		biggest /= 10;
 	}
@@ -73,6 +77,11 @@ int	uc_printf(char *format, ...) {
 			} else if ( format[index+1] == 's') {
 				count += print_string(va_arg(vl, uint32_t));
 				index++;
+			} else if ( format[index+1] == 'c') {
+				char _ch = va_arg(vl, uint32_t) ;
+				UART_PutChar (debug_port, _ch);
+				index++;
+				count++;
 			} else {
 				UART_PutChar(debug_port, ch);
 				count++;

@@ -2,7 +2,7 @@
  * lpc17xx_spi.h
  *
  *  Created on: Nov 5, 2015
- *      Author: mark.marinas
+ *      Author: mmarinas
  */
 
 #ifndef LPC17XX_SPI_H_

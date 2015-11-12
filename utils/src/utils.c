@@ -2,7 +2,7 @@
  * utils.c
  *
  *  Created on: Oct 26, 2015
- *      Author: mark.marinas
+ *      Author: mmarinas
  */
 
 #include "utils.h"

@@ -2,7 +2,7 @@
  * stdirq.h
  *
  *  Created on: Oct 29, 2015
- *      Author: mark.marinas
+ *      Author: mmarinas
  */
 
 #ifndef STDIRQ_H_
