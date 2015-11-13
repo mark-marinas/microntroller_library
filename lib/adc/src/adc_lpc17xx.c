@@ -52,6 +52,23 @@ static void Enable_ADC_IRQ(void) {
 	NVIC_EnableIRQ(ADC_IRQn);
 }
 
+static void LPC17XX_Get_ADC_Value(void) {
+	int adcr = LPC_ADC->ADGDR;
+	int channel = (adcr >> 24) & 0x07;
+	int result  = (adcr >> 4) & 0xFFF;
+	int overrun = (adcr >> 30) & 0x01; //TODO: Is there a use for this?
+	int done = (adcr >> 31) & 0x01;
+
+	lpc17xx_adc_config_t *config = adc_configs[channel];
+	if (config->trigger_mode == MANUAL) {
+		//Stop conversion
+		WriteReg (&(LPC_ADC->ADCR), 0, 24, 26);
+	}
+	config->done = done;
+	config->result = result;
+}
+
+
 void LPC17XX_ADC_IRQ_Handler_Default(void) {
 	int adcr = LPC_ADC->ADGDR;
 	int channel = (adcr >> 24) & 0x07;
@@ -131,6 +148,7 @@ error_code_t 	ADC_Config(void *config) {
 	if (_config->trigger_mode == BURST) {
 		LPC_ADC->ADCR |= (1 << 16);
 		LPC_ADC->ADINTEN &= ~(1 << 8);
+		WriteReg(&(LPC_ADC->ADCR), 1, _config->channel, _config->channel);
 	}
 
 	if (_config->irqhandler == 0) {
@@ -156,10 +174,19 @@ error_code_t	ADC_Read(void *config) {
 	lpc17xx_adc_config_t *_config = config;
 
 	_config->done = 0;
-	error  = WriteReg (&(LPC_ADC->ADCR), 1, _config->channel, _config->channel);
-	//Start conversion
-	error |= WriteReg (&(LPC_ADC->ADCR), 1, 24, 26);
+
+	if (_config->trigger_mode == MANUAL) {
+		error  = WriteReg (&(LPC_ADC->ADCR), 1, _config->channel, _config->channel);
+		//Start conversion
+		error |= WriteReg (&(LPC_ADC->ADCR), 1, 24, 26);
+	}
 	//Wait until conversion is done. TODO: This should Time out.
-	while (_config->done == 0);
+	if (_config->trigger_mode == MANUAL) {
+		while (_config->done == 0);
+	} else {
+			do {
+				LPC17XX_Get_ADC_Value();
+			} while (_config->done == 0);
+	}
 	return error;
 }

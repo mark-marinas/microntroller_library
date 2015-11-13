@@ -29,10 +29,6 @@ int print_int(uint32_t dec) {
 	int digit;
 	int first = 1;
 
-	if (dec == 0xbf) {
-		digit  = 1;
-	}
-
 	uint32_t biggest = 1000000000; //biggest for unsigned 32 bit.
 	while (_dec > 0) {
 		digit = 1;
@@ -47,6 +43,11 @@ int print_int(uint32_t dec) {
 		}
 		biggest /= 10;
 	}
+	if (first == 1) {
+		UART_PutChar(debug_port, '0');
+		count++;
+	}
+
 	return count;
 }
 

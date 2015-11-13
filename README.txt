@@ -7,7 +7,7 @@ GPIO - Normal I/O, interrupt
 UART
 I2C
 SPI
-ADC, but not yet on BURST mode.
+ADC, burst mode(hardware) and software mode.
 
 Hoping to implement the following features next:
 SSPI

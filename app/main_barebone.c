@@ -69,12 +69,20 @@ int main( void )
 
 	adc5.channel = ADC_CHANNEL5;
 	adc5.rate = 200e3;
-	adc5.trigger_mode = MANUAL;
+	adc5.trigger_mode = BURST;
 	adc5.irqhandler = 0;
 
 
 	if ( (error = GPIO_Config(&key1)) != NO_ERROR ) {
 		while (1);
+	}
+
+	signal_level_t trigger_mode;
+	GPIO_GetLevel(&key1, &trigger_mode);
+	if (trigger_mode == HI) {
+		adc5.trigger_mode = BURST;
+	} else {
+		adc5.trigger_mode = MANUAL;
 	}
 
 	if ( (error = UART_Config(&uart0)) != NO_ERROR) {
@@ -93,6 +101,7 @@ int main( void )
 	if ( (error = ADC_Config(&adc5)) != NO_ERROR ) {
 		while (1);
 	}
+
 
 	uc_printf ("Uart0 Initialized\n\r");
 
@@ -202,7 +211,9 @@ int main( void )
 			if (error != NO_ERROR) {
 				while (1);
 			}
-			ADC_Read(&adc5);
+			if ( (error = ADC_Read(&adc5)) != NO_ERROR ) {
+				while (1);
+			}
 		} else if (key1_status == INTERRUPT_ENABLED_RISING) {
 			uc_printf ("Rising Edge\n\r");
 			error = GPIO_ClrIRQ(&key1);
@@ -210,8 +221,16 @@ int main( void )
 				while (1);
 			}
 		}
+		//if (adc5.trigger_mode == BURST) {
+			ADC_Read(&adc5);
+		//}
 		if (adc5.done) {
-			uc_printf ("%d\n\r", adc5.result);
+			int i=0;
+			for (i=0; i<adc5.result/33; i++) {
+				uc_printf("*");
+			}
+			uc_printf("\n\r");
+			//uc_printf ("%d\n\r", adc5.result);
 			adc5.done = 0;
 		}
 	}
