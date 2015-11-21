@@ -5,21 +5,22 @@
  *      Author: mmarinas
  */
 
-
+#include <math.h>
 #include "LPC17xx.h"
 #include "stdperip.h"
 #include "gpio_lpc17xx.h"
 #include "stdirq.h"
-#include "stdperip.h"
 #include "uart_lpc17xx.h"
 #include "i2c_lpc17xx.h"
 #include "spi_lpc17xx.h"
 #include "adc_lpc17xx.h"
+#include "dac_lpc17xx.h"
 #include "uc_stdio.h"
+
+static void Play_Piano(dac_config_t *dac_config, float vol);
 
 int main( void )
 {
-
 	uart_config_t uart0;
 	gpio_config_t key1;
 	i2c_config_t i2c0;
@@ -27,6 +28,7 @@ int main( void )
 	spi_config_t spi0;
 	spi_command_t spi_cmd;
 	adc_config_t adc5;
+	dac_config_t dac0;
 
 
 	error_code_t error;
@@ -72,6 +74,8 @@ int main( void )
 	adc5.trigger_mode = BURST;
 	adc5.irqhandler = 0;
 
+	dac0.sampling_rate = 32e3;
+
 
 	if ( (error = GPIO_Config(&key1)) != NO_ERROR ) {
 		while (1);
@@ -102,8 +106,10 @@ int main( void )
 		while (1);
 	}
 
-
-	uc_printf ("Uart0 Initialized\n\r");
+	if ( (error = DAC_Config(&dac0)) != NO_ERROR ) {
+		while (1);
+	}
+	uc_printf ("HardWare Initialized\n\r");
 
 	/* READ ID USING READ-ID */
 	//Write Register.
@@ -198,8 +204,9 @@ int main( void )
 		uc_printf("%c",fw_version_read[i]);
 	}
 	uc_printf("\n\r");
-
 	pin_interrupt_type_t key1_status;
+	float vol=0;
+	int timeout = 0;
 	while (1) {
 		error = GPIO_GetIRQ(&key1, &key1_status);
 		if (error != NO_ERROR) {
@@ -221,18 +228,45 @@ int main( void )
 				while (1);
 			}
 		}
-		//if (adc5.trigger_mode == BURST) {
-			ADC_Read(&adc5);
-		//}
-		if (adc5.done) {
-			int i=0;
-			for (i=0; i<adc5.result/33; i++) {
-				uc_printf("*");
-			}
-			uc_printf("\n\r");
-			//uc_printf ("%d\n\r", adc5.result);
-			adc5.done = 0;
+		//#if (DISPLAY_ADC == 1)
+				//if (adc5.trigger_mode == BURST) {
+				if (timeout == 20000) {
+					ADC_Read(&adc5);
+					timeout = 0;
+				} else {
+					timeout++;
+				}
+				//}
+				if (adc5.done) {
+					vol =0 ;
+					int i=0;
+					int result = adc5.result;
+					for (i=0; i<4096; i+=256) {
+						vol++;
+						if (result >= i && result <= (i + 256) ) {
+
+							break;
+						}
+					}
+
+					/*
+					for (i=0; i<adc5.result/33; i++) {
+						uc_printf("*");
+					}
+					uc_printf("\r");
+					*/
+					//uc_printf ("%d\n\r", adc5.result);
+					adc5.done = 0;
+				}
+		//#endif
+		//#if (PLAY_PIANO == 1)
+		if (vol == 0) {
+			vol = 1;
+		} else if (vol > 1) {
+			//vol = vol ; //1 + (vol - 1)*0.2;
 		}
+		Play_Piano(&dac0, vol );
+		//#endif
 	}
 
 	#if (UART_TEST == 1)
@@ -251,12 +285,94 @@ int main( void )
 		//}
 	}
 	#endif
-
-
-
 	return 0;
 }
 
 
+#define LOW_DO	261.63
+#define RE		293.66
+#define MI		329.63
+#define FA		349.23
+#define SO		392.00
+#define LA		440.00
+#define TI		493.88
+#define HIGH_DO	523.25
+
+#define MAX_REP	1.0
+
+static void Play_Piano(dac_config_t *dac_config, float vol) {
+	char note;
+	float sampling_interval = 1.00/(dac_config->sampling_rate);
+	static int rep=0;
+	static int rep_done=0;
+	static int sample_count=0;
+	static int orig_sample_count = 0;
+	static double sample_rate = 0;
+	static float sample_period = 0;
+	static int sample_idx = 0;
 
 
+	if ( UART_GetChar(COM0, &note) == NO_ERROR  && ( sample_count == 0 || rep_done > 0) ) {
+		switch (note) {
+			case 'a':
+				sample_rate = LOW_DO;
+				break;
+			case 's':
+				sample_rate = RE;
+				break;
+			case 'd':
+				sample_rate = MI;
+				break;
+			case 'f':
+				sample_rate = FA;
+				break;
+			case 'g':
+				sample_rate = SO;
+				break;
+			case 'h':
+				sample_rate = LA;
+				break;
+			case 'j':
+				sample_rate = TI;
+				break;
+			case 'k':
+				sample_rate = HIGH_DO;
+				break;
+			default:
+				sample_rate = 0;
+				break;
+		}
+		if (sample_rate > 0) {
+			sample_period = 1.00/sample_rate;
+			sample_count = sample_period/sampling_interval;
+
+			rep = MAX_REP/sample_period; //5 / sample_period;
+			rep_done = 0;
+			orig_sample_count = sample_count;
+			sample_idx = 0;
+		} else {
+			rep = 0;
+			sample_count = 0;
+		}
+	}
+
+	uint16_t dac_value;
+	error_code_t error;
+	if (sample_rate != 0 && sample_count > 0) {
+		//Calculate a new value.
+		float multiplier;
+		multiplier = sin(2*3.14*sample_rate*sample_idx*sampling_interval)*vol;
+		dac_value = 1024*multiplier;
+		if ( (error=DAC_Write_FIFO(&dac_value, 1)) == NO_ERROR ) {
+			sample_idx++;
+			sample_count--;
+		}
+		if (sample_count == 0 && (rep_done < rep)) {
+			sample_count = orig_sample_count;
+			sample_idx = 0;
+			rep_done++;
+		}
+	}
+
+	DAC_Write_Value(&dac_value);
+}

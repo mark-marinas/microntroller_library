@@ -35,7 +35,7 @@ DADEFS =
 DINCDIR = 
 
 # List the default directory to look for the libraries here
-DLIBDIR =
+DLIBDIR = 
 
 # List all default libraries here
 DLIBS = 
@@ -84,6 +84,7 @@ SRC	= ./cmsis/device/system_LPC17xx.c \
 	  ./lib/i2c/src/i2c_lpc17xx.c \
 	  ./lib/spi/src/spi_lpc17xx.c \
 	  ./lib/adc/src/adc_lpc17xx.c \
+	  ./lib/dac/src/dac_lpc17xx.c \
 	  ./lib/hal/src/stdirq.c \
 	  ./utils/src/utils.c \
 	  ./utils/src/fifo.c \
@@ -132,6 +133,7 @@ UINCDIR  = ./freeRTOS/portable/ARM_CM3 \
 		   ./lib/clock/inc \
 		   ./lib/spi/inc \
 		   ./lib/adc/inc \
+		   ./lib/dac/inc \
 		   ./app \
 		   ./lib/gpio/inc \
 		   ./utils/inc 
@@ -143,7 +145,7 @@ UINCDIR  = ./freeRTOS/portable/ARM_CM3 \
 #          ./cmsis/device
 
 # List the user directory to look for the libraries here
-ULIBDIR =
+ULIBDIR = 
 
 # List all user libraries here
 ULIBS = 
@@ -172,7 +174,7 @@ MCFLAGS = -mcpu=$(MCU)
 
 ASFLAGS = $(MCFLAGS) -g -gdwarf-2 -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
 CPFLAGS = $(MCFLAGS) $(OPT) -gdwarf-2 -mthumb -fomit-frame-pointer -Wall -Wstrict-prototypes -fverbose-asm -Wa,-ahlms=$(<:.c=.lst) $(DEFS)
-LDFLAGS = $(MCFLAGS) -mthumb -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(FULL_PRJ).map,--cref,--no-warn-mismatch $(LIBDIR)
+LDFLAGS = $(MCFLAGS) -mthumb -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(FULL_PRJ).map,--cref,--no-warn-mismatch $(LIBDIR) -lm
 
 # Generate dependency information
 CPFLAGS += -MD -MP -MF .dep/$(@F).d

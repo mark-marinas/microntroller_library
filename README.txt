@@ -8,10 +8,10 @@ UART
 I2C
 SPI
 ADC, burst mode(hardware) and software mode.
+DAC, sample application is a simple piano, where DO maps to A, RE maps to S, etc. Use the ADC as a volume (not so nice, but can demonstrate the use of ADC and DAC.
 
 Hoping to implement the following features next:
 SSPI
-DAC
 Timers
 
 And maybe USB and Ethernet.

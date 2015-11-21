@@ -37,5 +37,11 @@ error_code_t	I2C_Write(int i2c_port, void *data);
 error_code_t 	ADC_Config(void *config);
 error_code_t	ADC_Read(void *config);
 
+//DAC
+error_code_t	DAC_Config(void *config);
+error_code_t	DAC_Write_FIFO(void *data, int size);
+error_code_t	DAC_Write_Value(void *data);
+error_code_t	DAC_SetSamplingRate(void *sampling_rate);
+
 
 #endif /* STDPERIP_H_ */

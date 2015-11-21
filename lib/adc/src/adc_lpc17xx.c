@@ -13,7 +13,6 @@
 #include "clk_lpc17xx.h"
 #include "utils.h"
 #include "LPC17xx.h"
-#include "uc_stdio.h"
 
 
 #if ( using_OS == freeRTOS)
@@ -73,7 +72,7 @@ void LPC17XX_ADC_IRQ_Handler_Default(void) {
 	int adcr = LPC_ADC->ADGDR;
 	int channel = (adcr >> 24) & 0x07;
 	int result  = (adcr >> 4) & 0xFFF;
-	int overrun = (adcr >> 30) & 0x01; //TODO: Is there a use for this?
+	//int overrun = (adcr >> 30) & 0x01; //TODO: Is there a use for this?
 	int done = (adcr >> 31) & 0x01;
 
 	lpc17xx_adc_config_t *config = adc_configs[channel];

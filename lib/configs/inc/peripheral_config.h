@@ -91,4 +91,11 @@
 
 #define ADC_Generic_IRQ_Handler			LPC17XX_ADC_IRQ_Handler_Default
 
+
+//DAC
+#define config_DAC_PostHook				0
+#define config_DAC_Buffer_Size			200
+#define DAC_Write_Value					LPC17XX_DAC_Write_Value_Default
+#define DAC_Write_FIFO					LPC17XX_DAC_Write_Fifo_Default
+
 #endif /* PERIPHERAL_CONFIG_H_ */

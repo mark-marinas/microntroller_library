@@ -372,6 +372,7 @@ static error_code_t SPI_EnableIRQ (lpc17xx_spi_config_t *config) {
 	return error;
 }
 
+/*
 static int IS_TXBuffer_Empty( int spi_port ) {
 	uint32_t status;
 	switch (spi_port){
@@ -385,6 +386,7 @@ static int IS_TXBuffer_Empty( int spi_port ) {
 	}
 	return status;
 }
+*/
 
 static void ClearIRQ(lpc17xx_spi_config_t *config) {
 	switch (config->port) {
