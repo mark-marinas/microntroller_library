@@ -11,6 +11,9 @@
 #include "data_types.h"
 
 void	SetDebug_Port(int port);
-int		uc_printf(char *format, ...);
+int uc_printf(const char *format, ...);
+int uc_sprintf(char *str, const char *format, ...);
+int uc_snprintf(char *str, int size, const char *format, ...);
+
 
 #endif /* MY_STDIO_H_ */
